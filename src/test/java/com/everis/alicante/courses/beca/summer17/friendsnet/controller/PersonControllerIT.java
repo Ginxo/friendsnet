@@ -5,6 +5,7 @@ import com.everis.alicante.courses.beca.summer17.friendsnet.entity.Person;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -65,10 +69,13 @@ public class PersonControllerIT {
     }
 
     @Test
-    @DatabaseSetup("/initial-person.xml")
+    @DatabaseSetup("/db/initial-person.xml")
+    @ExpectedDatabase("/db/after-saving-person.xml")
     public void testFindAllWithContent() throws JSONException {
         //Arrange
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        List<Person> personList = new ArrayList<>();
+        personList.add(new Person());
+        HttpEntity<List<Person>> entity = new HttpEntity<List<Person>>(personList, headers);
 
         // Act
         ResponseEntity<String> response = restTemplate.exchange(
@@ -78,6 +85,8 @@ public class PersonControllerIT {
         // Assert
         JSONAssert.assertEquals("[{'id': 1, 'name':''}, {'id': 1, 'name':''}]", response.getBody(), false);
     }
+
+
 
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
