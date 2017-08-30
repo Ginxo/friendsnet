@@ -1,7 +1,10 @@
 package com.everis.alicante.courses.beca.summer17.friendsnet.controller;
 
+import com.everis.alicante.courses.beca.summer17.friendsnet.controller.domain.CreatePersonDTO;
+import com.everis.alicante.courses.beca.summer17.friendsnet.controller.domain.PersonDTO;
 import com.everis.alicante.courses.beca.summer17.friendsnet.entity.Person;
 import com.everis.alicante.courses.beca.summer17.friendsnet.manager.PersonManager;
+import com.everis.alicante.courses.beca.summer17.friendsnet.utils.converter.EntityConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +18,13 @@ public class PersonController {
     @Autowired
     private PersonManager manager;
 
+    @Autowired
+    private EntityConverter entityConverter;
+
     @GetMapping
-    public List<Person> getAll(){
-        return (List<Person>) manager.findAll();
+    public List<PersonDTO> getAll(){
+        List<Person> personList = (List<Person>) manager.findAll();
+        return entityConverter.convert(personList, PersonDTO.class);
     }
 
     @GetMapping("/{id}")
@@ -26,7 +33,8 @@ public class PersonController {
     }
 
     @PostMapping
-    public Person create(@RequestBody Person person){
+    public Person create(@RequestBody CreatePersonDTO personDTO){
+        final Person person = entityConverter.convert(personDTO, Person.class);
         return manager.save(person);
     }
 

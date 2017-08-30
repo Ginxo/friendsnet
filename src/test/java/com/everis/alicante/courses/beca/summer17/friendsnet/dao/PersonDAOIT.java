@@ -83,17 +83,10 @@ public class PersonDAOIT {
 
     @Test
     @DatabaseSetup("/db/initial-person.xml")
-    @ExpectedDatabase(value = "/db/after-saving-person.xml", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
+    @ExpectedDatabase(value = "/db/after-removing-person.xml", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
     public void testRemovePerson() throws JSONException {
-        // Arrange
-        Person person = dao.findById(2L);
-
         // Act
-        dao.remove(person);
-
-        // Assert
-        List<Person> all = (List<Person>) dao.findAll();
-        Assert.assertEquals(1, all.size());
+        dao.delete(1L);
     }
 
 }
